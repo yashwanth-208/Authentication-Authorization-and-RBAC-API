@@ -1,0 +1,97 @@
+Code Overview
+1. main.py
+This is the main entry point of the application.
+
+Root Route:
+
+python
+Copy code
+@app.get("/")
+async def read_root():
+    return {"message": "Welcome to the API!"}
+Publicly accessible route.
+Login Endpoint:
+
+python
+Copy code
+@app.post("/token", response_model=Token)
+async def login_for_access_token(form_data: UserCreate):
+    ...
+Accepts a username and password, generates a JWT token for valid users.
+Protected Endpoints:
+
+/admin/ - Accessible only by Admins.
+/moderator/ - Accessible by Admins and Moderators.
+/public/ - Accessible by everyone.
+2. schemas.py
+Defines the data models and request/response schemas.
+
+User Model:
+
+python
+Copy code
+class User(BaseModel):
+    username: str
+    role: str
+Token Model:
+
+python
+Copy code
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+3. security.py
+Handles JWT token creation and verification.
+
+Generate JWT Token:
+
+python
+Copy code
+def create_access_token(data: dict):
+    ...
+Verify JWT Token:
+
+python
+Copy code
+def verify_token(token: str):
+    ...
+4. crud.py
+Simulates database operations like retrieving user data.
+
+Fetch User:
+python
+Copy code
+def get_user(username: str):
+    ...
+How It Works
+Authentication Flow:
+
+The user sends a POST request to /token with their username and password.
+If the credentials are valid, a JWT token is returned.
+Authorization and RBAC:
+
+Protected routes require a valid JWT token in the Authorization header.
+The user’s role is checked using the role_required decorator to ensure they have permission to access the resource.
+Public and Protected Routes:
+
+/public/: Open to everyone.
+/admin/ and /moderator/: Restricted based on roles.
+Testing the Application
+Public Endpoint:
+
+Visit http://127.0.0.1:8000/public to access the public route.
+Login:
+
+Send a POST request to /token with the username and password.
+Protected Routes:
+
+Use the JWT token in the Authorization header to access /admin/ or /moderator/.
+Example Header:
+
+bash
+Copy code
+Authorization: Bearer your_jwt_token
+Future Enhancements
+Integrate with a real database (e.g., PostgreSQL, MongoDB).
+Add password hashing for secure storage.
+Implement user registration and role assignment.
